@@ -15,9 +15,14 @@ public class WebcamCapture {
         String Fillename = String.format("%s\\%s.png", CaptureDirectoryPath, getLocalDateTime.dateTime());
 
         Webcam webcam = Webcam.getDefault();
-        webcam.setViewSize(new Dimension(640, 480));
+
+        if (webcam == null) {
+            Utils.writeToLog("No webcam detected. Unable to capture image.");
+            return null;
+        }
 
         try {
+            webcam.setViewSize(new Dimension(640, 480));
             // Open the webcam
             webcam.open();
             // Capture image

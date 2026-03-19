@@ -1,16 +1,20 @@
 package pcloginalert;
 
 import java.io.File;
+import java.util.Properties;
+
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.*;
 
 public class TelegramAlert {
 
+    static Properties credentials = Utils.getCredentials();
+
     public static void sendTelegramAlert(String FilePath) {
         try {
-            String botToken = CryptoUtil.EncyptDecryptString(Utils.getCredentials("botToken"));
-            String chatId = CryptoUtil.EncyptDecryptString(Utils.getCredentials("chatId"));
+            String botToken = CryptoUtil.EncyptDecryptString(credentials.getProperty("botToken"));
+            String chatId = CryptoUtil.EncyptDecryptString(credentials.getProperty("chatId"));
 
             String CaptionText = TelegramAlertTemplate();
 
@@ -20,7 +24,7 @@ public class TelegramAlert {
                     .multiPart("photo", photo)
                     .formParam("chat_id", chatId)
                     .formParam("caption", CaptionText)
-                     .formParam("parse_mode", "HTML")
+                    .formParam("parse_mode", "HTML")
                     .formParam("protect_content", true)
                     .post("https://api.telegram.org/bot" + botToken + "/sendPhoto");
 
@@ -28,7 +32,7 @@ public class TelegramAlert {
 
             int statusCode = response.getStatusCode();
 
-            if(statusCode != 200) {
+            if (statusCode != 200) {
                 Utils.writeToLog("Telegram API responded with status code: " + statusCode);
                 Utils.UpdatePCLoginAlertStatusINI("LastAlertFailed", getLocalDateTime.dateTime());
                 return;
@@ -49,27 +53,27 @@ public class TelegramAlert {
         }
     }
 
-    	public static String TelegramAlertTemplate() {
+    public static String TelegramAlertTemplate() {
 
         String publicIP = FetchPublicIP.getPublicIP();
-		String machine = SystemInfo.getMachineName();
-		String user = SystemInfo.getUsername();
-		String osName = SystemInfo.getOsName();
-		String timestamp = getLocalDateTime.dateTime();
+        String machine = SystemInfo.getMachineName();
+        String user = SystemInfo.getUsername();
+        String osName = SystemInfo.getOsName();
+        String timestamp = getLocalDateTime.dateTime();
 
-		return String.format(
-				"<b>PC Login Alert</b>%n%n" +
-                "<b>Public IP</b>: <code>%s</code>%n" +
-						"<b>PC Name</b>: %s%n" +
-						"<b>User</b>: %s%n" +
-						"<b>OS</b>: %s%n" +
-						"<b>Timestamp</b>: %s",
-				publicIP,
-				machine,
-				user,
-				osName,
-				timestamp
+        return String.format(
+                "<b>PC Login Alert</b>%n%n" +
+                        "<b>Public IP</b>: <code>%s</code>%n" +
+                        "<b>PC Name</b>: %s%n" +
+                        "<b>User</b>: %s%n" +
+                        "<b>OS</b>: %s%n" +
+                        "<b>Activity Time</b>: %s",
+                publicIP,
+                machine,
+                user,
+                osName,
+                timestamp
 
-		);
-	}
+        );
+    }
 }

@@ -19,6 +19,7 @@ public class CaptureAndSendTelegramAlert {
             Utils.writeToLog("Failed to capture image. Telegram alert will not be sent.");
             return;
         }
+
         TelegramAlert.sendTelegramAlert(capturedImagePath);
 
         Utils.writeToLog("PC Login Alert process completed.");

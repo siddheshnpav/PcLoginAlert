@@ -132,7 +132,7 @@ public class Utils {
 		}
 	}
 
-    public static String getCredentials(String a) {
+    public static Properties getCredentials() {
 
 		Properties prop = new Properties();
 		FileInputStream fis = null;
@@ -155,7 +155,7 @@ public class Utils {
 					}
 				}
 			}
-			return prop.getProperty(a);
+			return prop;
 
 		} else {
 
